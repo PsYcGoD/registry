@@ -7,7 +7,7 @@
 // the default Ajv entrypoint.
 
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import Ajv from "ajv";
@@ -48,7 +48,7 @@ function main(): void {
       const passed = expected === "valid" ? ok : !ok;
       const errors = validate.errors ?? [];
       outcomes.push({
-        name: `${expected}/${file.split("/").pop()}`,
+        name: `${expected}/${basename(file)}`,
         passed,
         message: passed
           ? expected === "valid"
