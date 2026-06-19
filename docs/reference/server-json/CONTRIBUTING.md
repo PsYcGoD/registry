@@ -20,7 +20,11 @@ and must not be edited by hand.
    time it needs a manual edit is when you **add or remove a top-level definition** in
    `schema.ts`: add (or delete) the matching one-line `$ref` stub under
    `components/schemas`. `npm run check` enforces that every definition has a stub and
-   every stub targets a real definition.
+   every stub targets a real definition. Because the stubs are relative-path `$ref`s
+   into `draft/server.schema.json`, the reference `openapi.yaml` now needs the repo
+   checkout alongside it to fully resolve; the self-contained spec that subregistries
+   consume is the runtime-served one at `registry.modelcontextprotocol.io/openapi.yaml`
+   (generated independently from the Go types), which is unaffected.
 
 4. **Add or update examples**: Example documents under [`examples/`](./examples) are
    validated against the generated schema. `examples/valid/` must validate cleanly and
