@@ -13,12 +13,14 @@ and must not be edited by hand.
 2. **Regenerate the schema**: Run `make generate-schema` (or, from this directory,
    `npm run generate`) to update `draft/server.schema.json` from `schema.ts`.
 
-3. **Keep the OpenAPI spec in sync**: The `ServerDetail` component in
-   `docs/reference/api/openapi.yaml` documents the same shape for the REST API. CI
-   regenerates the schema from `openapi.yaml` too and fails if it diverges from the
-   committed `server.schema.json`, so update `openapi.yaml` to match. (Removing this
-   duplication — e.g. having `openapi.yaml` reference the generated schema — is a
-   reasonable future cleanup.)
+3. **OpenAPI references the schema automatically**: `docs/reference/api/openapi.yaml`
+   no longer duplicates these definitions — its `components/schemas` exposes each
+   server.json type as an external `$ref` into the generated `draft/server.schema.json`.
+   You do **not** need to edit `openapi.yaml` for an ordinary schema change. The only
+   time it needs a manual edit is when you **add or remove a top-level definition** in
+   `schema.ts`: add (or delete) the matching one-line `$ref` stub under
+   `components/schemas`. `npm run check` enforces that every definition has a stub and
+   every stub targets a real definition.
 
 4. **Add or update examples**: Example documents under [`examples/`](./examples) are
    validated against the generated schema. `examples/valid/` must validate cleanly and
@@ -34,14 +36,14 @@ and must not be edited by hand.
 From this directory (`docs/reference/server-json/`):
 
 ```bash
-npm ci            # install dev dependencies (tsx, typescript, ajv)
+npm ci            # install dev dependencies (tsx, typescript, ajv, yaml)
 npm run generate  # regenerate draft/server.schema.json from schema.ts
-npm run check     # fail if the committed schema is out of date + type-check schema.ts
+npm run check     # schema up to date + openapi $ref stubs in sync + type-check schema.ts
 npm run validate  # validate examples/ against the generated schema
 ```
 
 The generated JSON deliberately reproduces the previous Go (`encoding/json`) output
-byte-for-byte, so adopting this pipeline is a no-op for the schema content itself.
+byte-for-byte, so the schema *content* is unchanged by this pipeline.
 
 ## Releasing Changes
 
@@ -49,7 +51,7 @@ When the draft changes are ready for release:
 
 1. **Update the changelog**: Move changes from "Draft (Unreleased)" to a new dated section (e.g., `## 2025-XX-XX`).
 
-2. **Update the schema URL**: Change the `$id` in the schema and the example URL in `openapi.yaml` from `draft` to the release date (e.g., `2025-XX-XX`).
+2. **Update the schema URL**: Change the `$id` in [`schema.ts`](./schema.ts) from `draft` to the release date (e.g., `2025-XX-XX`) and run `make generate-schema`.
 
 3. **Merge the PR**: Get approval and merge the changes to main.
 

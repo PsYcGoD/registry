@@ -14,7 +14,7 @@
 export type JSONSchema = { [keyword: string]: unknown };
 
 export const schema: JSONSchema = {
-  "$comment": "This file is auto-generated from docs/reference/api/openapi.yaml. Do not edit manually. Run 'make generate-schema' to update.",
+  "$comment": "This file is auto-generated from docs/reference/server-json/schema.ts. Do not edit manually. Run 'make generate-schema' to update.",
   "$id": "https://raw.githubusercontent.com/modelcontextprotocol/registry/main/docs/reference/server-json/draft/server.schema.json",
   "$ref": "#/definitions/ServerDetail",
   "$schema": "http://json-schema.org/draft-07/schema#",
